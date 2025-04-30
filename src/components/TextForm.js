@@ -157,11 +157,104 @@ export default function TextForm(props) {
         props.showAlert("Dashes and underscores removed!", "success");
     }
 
-    const handleCamelCase = () => {
-        // Split into words and convert to lowercase
-        let words = text.toLowerCase().split(/\s+/);
+    const removePunctuations = () => {
+        let newText = text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
+        newText = newText.replace(/\s+/g, ' ').trim();
+        setText(newText);
+        props.showAlert("Punctuations removed!", "success");
+    }
+
+    const handleWordReversal = () => {
+        let newText = text.split(/\s+/).map(word => {
+            return word.split('').reverse().join('');
+        }).join(' ');
         
-        // Capitalize first letter of each word except the first one
+        setText(newText);
+        props.showAlert("Words reversed!", "success");
+    }
+
+    const handleAllReversal = () => {
+        let newText = text.split('').reverse().join('');
+        setText(newText);
+        props.showAlert("Text completely reversed!", "success");
+    }
+
+    const handleNumbersToWords = () => {
+        // Check if input contains only digits
+        if (!/^\d+$/.test(text)) {
+            props.showAlert("Please enter only numbers!", "warning");
+            return;
+        }
+
+        // Check if number is within limit
+        const inputNum = parseInt(text);
+        if (inputNum > 1000000) {
+            props.showAlert("Number should be less than or equal to 1 million!", "warning");
+            return;
+        }
+
+        const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+        const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+        const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+
+        function convertLessThanThousand(n) {
+            if (n === 0) return '';
+            
+            let result = '';
+            
+            // Handle hundreds
+            if (n >= 100) {
+                result += ones[Math.floor(n / 100)] + ' Hundred ';
+                n %= 100;
+            }
+            
+            // Handle tens and ones
+            if (n > 0) {
+                if (n < 10) {
+                    result += ones[n];
+                } else if (n < 20) {
+                    result += teens[n - 10];
+                } else {
+                    result += tens[Math.floor(n / 10)];
+                    if (n % 10 > 0) {
+                        result += ' ' + ones[n % 10];
+                    }
+                }
+            }
+            
+            return result.trim();
+        }
+
+        let newText = '';
+        let remainingNum = inputNum;
+        
+        if (remainingNum === 0) {
+            newText = 'Zero';
+        } else {
+            // Handle millions
+            if (remainingNum >= 1000000) {
+                newText += convertLessThanThousand(Math.floor(remainingNum / 1000000)) + ' Million ';
+                remainingNum %= 1000000;
+            }
+            
+            // Handle thousands
+            if (remainingNum >= 1000) {
+                newText += convertLessThanThousand(Math.floor(remainingNum / 1000)) + ' Thousand ';
+                remainingNum %= 1000;
+            }
+            
+            // Handle remaining hundreds, tens, and ones
+            if (remainingNum > 0) {
+                newText += convertLessThanThousand(remainingNum);
+            }
+        }
+        
+        setText(newText.trim());
+        props.showAlert("Numbers converted to words!", "success");
+    }
+
+    const handleCamelCase = () => {
+        let words = text.toLowerCase().split(/\s+/);
         let newText = words.map((word, index) => {
             if (index === 0) {
                 return word.toLowerCase();
@@ -174,10 +267,7 @@ export default function TextForm(props) {
     }
 
     const handlePascalCase = () => {
-        // Split into words and convert to lowercase
         let words = text.toLowerCase().split(/\s+/);
-        
-        // Capitalize first letter of each word
         let newText = words.map(word => {
             return word.charAt(0).toUpperCase() + word.slice(1);
         }).join('');
@@ -215,12 +305,16 @@ export default function TextForm(props) {
                 <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleExtraSpaces}>Remove Extra Spaces</button>
                 <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleLineBreaks}>Remove Line Breaks</button>
                 <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={removeDashAndUnderscore}>Remove Dashes & Underscores</button>
+                <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={removePunctuations}>Remove Punctuations</button>
             </div>
 
             <h3 className="mt-4 mb-3">Miscellaneous</h3>
             <div className="mb-3">
                 <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleClearClick}>Clear Text</button>
                 <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleCopy}>Copy Text</button>
+                <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleWordReversal}>Reverse Words</button>
+                <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleAllReversal}>Reverse All</button>
+                <button disabled={text.length===0} className="btn btn-primary mx-1 my-1" onClick={handleNumbersToWords}>Convert to Words</button>
             </div>
         </div>
         <div className="container my-3" style={{color: props.mode==='dark'?'white':'#042743'}}>

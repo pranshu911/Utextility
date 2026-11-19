@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "mkdir -p dist && cp -R index.html styles.css engine.js saved-steps.js workbench.js worker.js assets dist/",
+  "outputDirectory": "dist",
+  "redirects": [
+    { "source": "/about", "destination": "/", "permanent": false }
+  ]
+}

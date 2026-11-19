@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#283c34">
+  <meta name="description" content="Clean up messy text, remove repeated lines, find and replace words, and check your word count in your browser.">
+  <title>Utextility · Clean up your text</title>
+  <link rel="icon" href="assets/mark.png" type="image/png">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="engine.js"></script>
+  <script defer src="saved-steps.js"></script>
+  <script defer src="workbench.js"></script>
+</head>
+<body>
+  <a class="skip" href="#source" tabindex="0">Skip to text editor</a>
+  <header class="masthead">
+    <div class="wrap mast-inner">
+      <a class="wordmark" href="#desk" aria-label="Utextility home"><span class="printer-flower" aria-hidden="true">✳</span>Utextility<span class="brand-period" aria-hidden="true">.</span></a>
+      <nav aria-label="Main navigation">
+        <a class="desk-link" href="#desk" aria-current="page">Editor</a>
+        <button id="open-book" class="nav-button" type="button">Saved steps</button>
+        <button id="theme" class="theme" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">◐</span></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="desk">
+    <div class="hero">
+      <div class="hero-copy">
+        <h1>Clean up your <em>text</em><span class="red-period">.</span></h1>
+        <p>Paste your text, choose a tool, and copy the result.</p>
+      </div>
+      <div class="specimen" aria-hidden="true">
+        <i class="reg top-left"></i><i class="reg top-right"></i>
+        <i class="reg bottom-left"></i><i class="reg bottom-right"></i>
+        <span class="type-rails"></span><span class="specimen-type">A<em>a</em></span>
+      </div>
+    </div>
+
+    <section class="bench" aria-label="Text editor">
+      <div class="recipe-strip">
+        <h2 class="small-heading" id="quick-title">Quick tools</h2>
+        <div id="quick-recipes" class="quick-recipes" role="group" aria-labelledby="quick-title"></div>
+        <button id="open-tools" class="quiet" type="button">More tools</button>
+      </div>
+      <div id="tool-options" class="tool-options" hidden></div>
+      <div class="spread">
+        <section class="sheet source-sheet" aria-labelledby="source-title">
+          <div class="sheet-heading">
+            <h2 id="source-title"><label for="source">Your text</label></h2>
+            <button id="sample" class="quiet" type="button">Try an example</button>
+          </div>
+          <textarea id="source" class="editor" dir="auto" placeholder="Paste or type your text here…" spellcheck="false" autocomplete="off" aria-describedby="source-info"></textarea>
+          <div class="sheet-foot">
+            <span id="source-info" class="metadata"></span>
+            <div class="actions">
+              <a class="quiet mobile-result" href="#proof-title" tabindex="0">View result</a>
+              <button id="open-file" class="light-button" type="button">Open file</button>
+              <button id="clear" class="quiet" type="button">Clear</button>
+            </div>
+            <input type="file" id="file" accept=".txt,.md,.csv,.tsv,text/plain,text/markdown,text/csv,text/tab-separated-values" hidden>
+          </div>
+        </section>
+        <section class="sheet proof-sheet" aria-labelledby="proof-title">
+          <div class="sheet-heading">
+            <h2 id="proof-title" tabindex="-1">Result</h2>
+            <div class="view-switch" role="group" aria-label="Result view">
+              <button data-view="text" type="button" aria-pressed="true">Text</button>
+              <button data-view="changes" type="button" aria-pressed="false">Changes</button>
+            </div>
+          </div>
+          <div class="proof-area">
+            <div id="proof" class="proof-text" role="region" aria-label="Edited text" tabindex="0" dir="auto"></div>
+            <div id="changes" class="changes-text" role="region" aria-label="Changes to your text" tabindex="0" dir="auto" hidden></div>
+          </div>
+          <div class="sheet-foot proof-foot">
+            <span id="proof-state" class="metadata"></span>
+            <div class="actions">
+              <button id="download" class="light-button" type="button" disabled>Download</button>
+              <button id="copy" class="primary" type="button" disabled><span aria-hidden="true" class="copy-icon"></span>Copy result</button>
+            </div>
+          </div>
+        </section>
+      </div>
+      <p id="link-note" class="context-note" role="status" aria-atomic="true" hidden></p>
+      <div id="notice" class="notice" role="status" aria-atomic="true"></div>
+    </section>
+
+    <div class="below-bench">
+      <section aria-labelledby="steps-title" class="steps-panel">
+        <div class="subhead"><h2 id="steps-title">Current steps</h2><button id="edit-top" class="quiet" type="button">Edit steps</button></div>
+        <ol id="step-summary" class="step-summary"></ol>
+      </section>
+      <section aria-labelledby="stats-title" class="stats-panel">
+        <div class="subhead counts-head"><h2 id="stats-title">Text counts</h2>
+          <select id="count-source" class="count-select" aria-label="Text to count"><option value="result">Result</option><option value="original">Your text</option></select>
+          <button id="edit-limit" type="button" class="quiet" aria-controls="limit-form" aria-expanded="false">Set a limit</button>
+        </div>
+        <dl id="stats" class="stats">
+          <div><dt>Words</dt><dd data-stat="words">—</dd></div>
+          <div><dt>Characters</dt><dd data-stat="characters">—</dd></div>
+          <div><dt>Lines</dt><dd data-stat="lines">—</dd></div>
+          <div><dt>Sentences</dt><dd data-stat="sentences">—</dd></div>
+          <div><dt>Reading time</dt><dd data-stat="seconds">—</dd></div>
+        </dl>
+        <p id="limit-status" class="limit-status"></p>
+        <form id="limit-form" class="limit-form" hidden>
+          <label>Maximum <input id="limit-value" class="text-field" type="number" min="1" max="1000000" step="1" required inputmode="numeric" placeholder="250"></label>
+          <div class="limit-control"><label for="limit-unit">Count</label><select id="limit-unit" class="text-field"><option value="words">Words</option><option value="characters">Characters</option></select></div>
+          <button type="submit" class="light-button">Apply</button><button id="remove-limit" type="button" class="quiet" hidden>Remove</button>
+        </form>
+        <p class="stats-note" id="approx" hidden>Counts are approximate in this browser. Some emoji may count as several characters.</p>
+      </section>
+    </div>
+    <footer class="page-foot"><span class="local-mark" aria-hidden="true"></span>Your text stays in this tab. Saved steps stay in this browser.</footer>
+    <noscript>Turn on JavaScript in this browser to edit your text.</noscript>
+  </main>
+
+  <dialog id="recipe-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-head">
+      <h2 id="dialog-title">Saved steps</h2>
+      <button id="close-dialog" type="button" class="close-button" aria-label="Close dialog">×</button>
+    </div>
+    <div class="dialog-body">
+      <section id="book-page" hidden>
+        <div class="dialog-subhead"><h3>Your saved steps</h3><button id="save-from-book" type="button" class="light-button">Save current steps</button></div>
+        <div id="saved-list"></div>
+        <details id="transfer" class="tool-group">
+          <summary>Move steps to another browser</summary>
+          <p class="help-hint">A steps file includes its name, tools, and any saved find-and-replace words.</p>
+          <div class="transfer-actions">
+            <label for="export-choice">Steps to download</label>
+            <select id="export-choice" class="text-field"></select>
+            <button id="export-steps" type="button" class="light-button">Download steps file</button>
+            <button id="import-steps" type="button" class="light-button">Open steps file</button>
+            <input id="steps-file" type="file" accept=".json,application/json" hidden>
+          </div>
+        </details>
+      </section>
+      <section id="tools-page" hidden>
+        <details id="customize" class="customize"><summary>Edit current steps <span id="step-count"></span></summary>
+          <ol id="step-editor" class="step-editor"></ol>
+          <button id="save-from-tools" class="light-button" type="button">Save these steps</button>
+        </details>
+        <h3 class="catalogue-title"><label for="tool-search">Find a tool</label></h3>
+        <input id="tool-search" type="search" class="text-field" placeholder="Search by name or task…" autocomplete="off">
+        <div id="tool-list"></div>
+      </section>
+      <section id="save-page" hidden>
+        <p class="dialog-intro">Give these steps a name to use them again.</p>
+        <form id="save-form">
+          <label for="recipe-name">Name</label>
+          <input id="recipe-name" class="text-field" name="name" required maxlength="60" autocomplete="off" placeholder="e.g. Release note headings">
+          <p id="save-hint" class="help-hint"></p>
+          <p id="save-fields-note" class="help-hint" hidden>The words in your Find and Replace with fields will be saved too.</p>
+          <div class="button-bar"><button type="button" id="back" class="light-button">Back</button><button class="primary" type="submit">Save steps</button></div>
+        </form>
+      </section>
+    </div>
+    <p id="dialog-notice" class="dialog-notice" role="status" aria-atomic="true"></p>
+  </dialog>
+</body>
+</html>

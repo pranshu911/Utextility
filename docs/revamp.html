@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A source audit, product proposal, visual direction and release plan for Utextility.">
+<meta name="author" content="Prepared for Pranshu Choubey">
+<title>Utextility revamp proposal</title>
+<style>
+@font-face{font-family:DMSans;src:url("../assets/dm-sans.woff2") format("woff2");font-weight:400 700;font-display:swap}
+@font-face{font-family:DMSerif;src:url("../assets/dm-serif-text.woff2") format("woff2");font-weight:400;font-display:swap}
+:root{--ink:#202a24;--shade:#536156;--accent:#93412d;--paper:#faf8f1;--line:#c9ccbf;--wash:#edf1e7;--serif:DMSerif,Georgia,serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#eeeee5;color:var(--ink);font:1.025rem/1.53 DMSans,"Segoe UI",sans-serif}
+main{max-width:55rem;margin:0 auto;padding:1.7rem 1rem 3rem}article{background:#fffef9;padding:clamp(1.25rem,5.4vw,4.6rem);box-shadow:0 6px 30px #27382f0c}
+nav{max-width:55rem;margin:0 auto;display:flex;gap:.5rem 1.2rem;align-items:center;flex-wrap:wrap;padding:1rem;color:var(--ink)}
+nav strong{margin-right:auto;font-family:var(--serif);font-size:1.2rem;letter-spacing:-.04em}a{color:#315749;text-underline-offset:.18em}
+a:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+section+section{border-top:1px solid var(--line);margin-top:3rem;padding-top:2.6rem}
+h1,h2,h3,h4{color:#171d19}h1,h2{font-family:var(--serif);font-weight:400;letter-spacing:-.045em}h1{font-size:clamp(2.45rem,4.9vw,3.85rem);line-height:1.02;margin:0 0 .55rem}
+h2{font-size:clamp(2rem,3.5vw,2.72rem);line-height:1.08;margin:0 0 1rem}h3{font-size:1.15rem;line-height:1.25;margin:1.4rem 0 .35rem}h4{font-size:1rem;margin:.6rem 0 .2rem}
+p{margin:.5rem 0 .76rem}.byline,.source,.small{color:var(--shade);font-size:.9rem}.byline{margin:.8rem 0 1.7rem}
+.lead{font-family:Georgia,serif;font-size:1.3rem;line-height:1.43;margin:0 0 1rem}.source{margin:.65rem 0 0}.source a{white-space:normal}
+.callout{background:var(--wash);border-left:3px solid #70816c;padding:.65rem .9rem;margin:1rem 0}.callout p{margin:.1rem 0}
+.contents{line-height:1.85;margin-top:1.5rem}.contents a{display:inline-block;margin-right:1rem}
+table{border-collapse:collapse;width:100%;margin:.65rem 0 .85rem;font-size:.94rem;line-height:1.38;table-layout:fixed}
+th,td{border:1px solid #d6d9ce;vertical-align:middle;text-align:left;padding:.51rem .62rem;overflow-wrap:anywhere}
+th{background:#35483e;color:white;font-size:.91em;font-weight:650}tbody tr:nth-child(even){background:#f4f5ef}
+td b{font-weight:650}code,pre,.monospace{font-family:Consolas,"Courier New",monospace}code{font-size:.91em;overflow-wrap:anywhere}
+.folio{font-weight:650;text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;color:var(--accent);margin:0 0 .55rem}
+.example{border-left:3px solid #a54731;padding:.4rem .85rem;margin:.6rem 0;background:#f7f2e9}
+.example p{margin:.15rem 0}.example code{white-space:pre-wrap}
+ul,ol{padding-left:1.25rem;margin:.55rem 0 .8rem}li{padding-left:.15rem;margin:0 0 .32rem}
+.concept{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:1.25rem;align-items:center;margin:.8rem 0;padding:.75rem 0;border-bottom:1px solid var(--line)}
+.concept h3{font:1.38rem/1.1 var(--serif);letter-spacing:-.025em;margin:0 0 .35rem}.concept p{font-size:.96rem;margin:.28rem 0;line-height:1.42}
+.plate{padding:.6rem .75rem;border:1px solid #a6ae9a;font-size:.86rem;line-height:1.32;min-height:7.7rem}
+.plate-title{font-size:1rem;font-weight:600}.press{background:#f4f1e6;color:#25382b}.press .plate-title{font:1.3rem var(--serif);border-bottom:2px solid #334737;padding-bottom:.12rem}
+.press .pairs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.35rem}.press .pairs>div+div{border-left:1px solid #a2ab96;padding-left:.5rem}
+.press small,.loom small{font-size:.75em;display:block;font-weight:700}.press del{color:#813722}
+.transit{background:#edf0df;color:#132c64;border-color:#647498}.transit .plate-title{font-family:"Arial Narrow",Arial,sans-serif;font-weight:700}
+.stops{display:flex;justify-content:space-between;position:relative;margin:.65rem 0 .55rem}.stops:before{content:"";background:#315b9e;height:3px;position:absolute;top:.39rem;left:.8rem;right:.8rem}.stop{position:relative;display:grid;justify-items:center;gap:.16rem;font-size:.78rem;font-weight:600}
+.stop i{background:white;width:.88rem;height:.88rem;border:3px solid #315b9e;border-radius:50%}.stop:last-child i{border-radius:0;background:#f4a340;border-color:#1c3768}
+.loom{background:#f3dfc7;border-color:#927584;color:#352c4c}.loom .plate-title{font-family:Georgia,serif}.weave{display:grid;grid-template-columns:2.2rem 1fr;margin-top:.3rem;gap:.12rem .4rem;align-items:center}.thread{height:.7rem;border:1px solid #413852;background:repeating-linear-gradient(90deg,#60507a 0 5px,#d2bad7 5px 9px)}.thread.cut{background:repeating-linear-gradient(45deg,#a75057 0 3px,#f1cfb2 3px 6px)}
+.plate-output{font-size:.81rem;font-weight:600}.verify{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.verify p{margin-top:.25rem}
+@media(max-width:38rem){main{padding:.3rem 0 0}article{padding:1.2rem}.concept,.verify{grid-template-columns:1fr;gap:.4rem}.plate{max-width:18rem}.source{font-size:.88rem}th,td{padding:.37rem .32rem}table{font-size:.87rem}nav{font-size:.88rem}}
+@page{size:A4;margin:17mm 17mm 18mm;@bottom-left{content:"Utextility revamp proposal";font:9pt Arial,sans-serif;color:#566257}@bottom-right{content:counter(page) " / " counter(pages);font:9pt Arial,sans-serif;color:#566257}}
+@media print{
+  html{scroll-behavior:auto}body{background:white;font:10.6pt/1.42 DMSans,"Segoe UI",sans-serif;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  main,article{width:auto;max-width:none;padding:0;margin:0;background:white;box-shadow:none}nav,.contents,.screen-only{display:none}
+  section+section{break-before:page;margin:0;padding:0;border:none}h1{font-size:34pt}h2{font-size:25pt;margin:0 0 8pt}h3{font-size:12.6pt;margin:10pt 0 3pt}
+  p{margin:3.5pt 0 6pt}.lead{font-size:13.4pt;line-height:1.38;margin:0 0 8pt}.folio{font-size:8.5pt;margin:0 0 5pt}.byline{font-size:10pt;margin:7pt 0 16pt}
+  .source,.small{font-size:9.25pt}.source{margin:5pt 0 0}.callout{padding:7pt 9pt;margin:8pt 0}.example{padding:5pt 8pt;margin:5pt 0}
+  table{font-size:9.8pt;margin:5pt 0 7pt;line-height:1.32}th,td{padding:4.4pt 5.8pt}table tr,.concept,.example{break-inside:avoid}
+  .concept{grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr);gap:12pt;margin:6pt 0;padding:7pt 0}.concept h3{font:14.5pt/1.1 var(--serif)}.concept p{font-size:10pt}
+  .plate{font-size:9.5pt;min-height:85pt;max-width:none}.plate-output{font-size:9pt}
+  .verify{grid-template-columns:1fr 1fr;gap:12pt}a{color:#264d40}ul,ol{margin:4pt 0 6pt}li{margin-bottom:3pt}
+}
+</style>
+</head>
+<body>
+<nav aria-label="Document actions"><strong>Utextility</strong><a href="../index.html">Open the workbench</a><a href="Utextility-revamp.pdf">Read the PDF</a></nav>
+<main><article>
+<section id="direction" aria-labelledby="title">
+  <h1 id="title">Utextility revamp proposal</h1>
+  <p class="byline">Prepared for Pranshu Choubey · Product and engineering review · 19 November 2026</p>
+  <p class="lead">Build for the person who copies text out of one application and has to repair it before using it in another. Give them a named cleanup routine, keep the original in view, and let them inspect exactly what changed.</p>
+  <h3>Who would open this twice</h3>
+  <p>A developer preparing weekly release notes may copy paragraphs from a PDF, paste a list from a ticket, then trim the final copy to fit a publishing limit. Today that work can mean deleting hard returns by hand, searching for duplicate lines and opening a counter. A saved sequence earns a bookmark if the same person can use it again next week and trust the output.</p>
+  <p>Your March 2025 portfolio entry emphasizes case conversion, whitespace cleanup, live counts and phone access. The newer case study describes three occasions when you needed the tool. You had stray spaces to clean, a heading to fix or a word limit to meet. A pilot can establish how often other people encounter those jobs. <a href="https://pranshu911-portfolio.vercel.app/projects">Earlier project catalogue</a> · <a href="https://exf6.vercel.app/work/utextility">Current case study</a></p>
+  <h3>Where the tool can earn its place</h3>
+  <p>Text Mechanic already removes duplicate lines locally and keeps the first occurrence. CyberChef already chains operations into browser-side recipes. For someone publishing release notes, the decision that costs attention is whether the cleanup preserved their meaning. Utextility can put the original beside the proof and show what happened to every space or line break in a short paste. <a href="https://textmechanic.com/text-tools/basic-text-tools/remove-duplicate-lines/">Text Mechanic duplicate handling</a> · <a href="https://github.com/gchq/CyberChef#how-it-works">CyberChef workflow</a></p>
+  <div class="callout"><p><b>Working release.</b> The separate v2 implements three starting recipes, 23 individual operations, a change view, word and character budgets, saved recipes and plain-text import and export. The recommended visual direction is a letterpress proof room.</p></div>
+  <h3>What would justify a wider release</h3>
+  <p>Watch someone clean a real, shareable paste by their usual method, then with Utextility. Check whether the result preserves the paragraph or list structure they intended. A faster copy that silently merges a heading with body copy is a failed attempt. A repeat visit with a second document is stronger evidence than a positive first impression.</p>
+  <div class="contents"><strong>Contents</strong><br><a href="#audit">Original application</a><a href="#findings">Behavioral findings</a><a href="#workflows">First release</a><a href="#design">Visual directions</a><a href="#engineering">Engineering</a><a href="#release">Roadmap and validation</a></div>
+</section>
+
+<section id="audit" aria-labelledby="audit-title">
+  <p class="folio">Source review</p><h2 id="audit-title">Inside the original application</h2>
+  <p>The audited checkout contains 47 tracked files at commit <code>831e13e</code>. One React component owns the text, implements the operations and renders the summary. The project has two client-side routes. Text processing runs in the browser. <a href="https://github.com/pranshu911/Utextility/tree/831e13e9733496ba88428272ef30c8e046a418b5">Audited revision</a></p>
+  <table><colgroup><col style="width:28%"><col></colgroup><thead><tr><th>Area</th><th>What it does and why it matters</th></tr></thead><tbody>
+    <tr><td><b>Entry and routing</b><br><code>index.js</code>, <code>App.js</code></td><td>ReactDOM mounts the app in Strict Mode. Router v5 switches between the editor at <code>/</code> and the help cards at <code>/about</code>. App holds the light/dark flag and transient alert. Leaving the editor unmounts the text state.</td></tr>
+    <tr><td><b>Editor</b><br><code>TextForm.js</code></td><td>One controlled textarea feeds 19 buttons, a summary and a preview. Each transform writes its output back to the same state. An empty string disables the controls. Copy and clear share the same visual weight as transformations.</td></tr>
+    <tr><td><b>Help and shell</b><br><code>About.js</code>, <code>Navbar.js</code>, <code>Alert.js</code></td><td>Eighteen hand-written help cards duplicate tool descriptions. Number spelling has a button and no help card. Bootstrap handles navigation collapse and alert presentation. App clears alerts on independent 1.5-second timers.</td></tr>
+    <tr><td><b>Presentation and assets</b><br><code>public/</code>, CSS, logo</td><td>The HTML entry loads Bootstrap 5.1.0 CSS and JS from jsDelivr. The 25 PNG/ICO variants, generic “App” manifest, tile config and robots file provide site metadata. The React logo and starter animation rules do not drive the editor. The index stylesheet targets an accordion.</td></tr>
+    <tr><td><b>Toolchain</b><br><code>package*.json</code>, README, ignore rules</td><td>The lock resolves React/DOM 17.0.2, Router 5.2.0 and react-scripts 4.0.3. Start and build scripts use Windows-style environment assignment. Deploy calls <code>gh-pages</code>, absent from the manifest and lock. The README covers Create React App commands.</td></tr>
+    <tr><td><b>Tests and leftovers</b><br><code>App.test.js</code>, setup, vitals, root modules</td><td>The only test looks for the starter “learn react” link, which the app never renders. Setup enables jest-dom. The vitals helper receives no reporting callback. The two root <code>.mjs</code> files demonstrate imports and exports outside the application.</td></tr>
+  </tbody></table>
+  <h3>What the 19 buttons cover</h3>
+  <p><b>Ten case and identifier operations</b> cover upper, lower, capitalize words, English-style title case, invert, alternate, snake, kebab, camel and Pascal case. <b>Four cleanup operations</b> collapse spaces, remove line breaks, unpack dashes and underscores, and remove selected punctuation. <b>Five miscellaneous actions</b> clear, copy, reverse letters inside words, reverse the whole string, and spell a digit-only integer from zero through one million.</p>
+  <p>The summary reports characters, words, sentences, nonempty lines and a reading estimate of 0.008 minutes per word, or 125 words per minute. The preview repeats the current string inside an ordinary paragraph. <a href="https://github.com/pranshu911/Utextility/blob/831e13e9733496ba88428272ef30c8e046a418b5/src/components/TextForm.js#L279-L329">Editor and summary</a> · <a href="https://github.com/pranshu911/Utextility/blob/831e13e9733496ba88428272ef30c8e046a418b5/src/App.js#L14-L55">App state and routes</a></p>
+</section>
+
+<section id="findings" aria-labelledby="findings-title">
+  <p class="folio">Source review</p><h2 id="findings-title">Where the original changes meaning</h2>
+  <p>These examples give the migration a behavioral baseline. The transformation rows below were exercised directly against the original handlers. The counts and interface findings follow from their render expressions. In the examples, <code>·</code> denotes a space and <code>↵</code> denotes a line break.</p>
+  <table><colgroup><col style="width:23%"><col style="width:36%"><col></colgroup><thead><tr><th>Operation or action</th><th>Observed in the original</th><th>Decision for v2</th></tr></thead><tbody>
+    <tr><td><b>Remove extra spaces</b></td><td><code>··hello···world··</code> becomes <code>·hello·world·</code>. The portfolio example implies trimmed edges.</td><td>Expose edge trimming and internal spacing separately. The default paste recipe applies both and handles tabs and nonbreaking spaces.</td></tr>
+    <tr><td><b>Capitalize and reverse</b></td><td>Capitalize turns <code>hello↵WORLD</code> into <code>Hello·World</code>. Reverse Words turns <code>one·two</code> into <code>eno·owt</code>. The help describes sentence capitalization and word-order reversal.</td><td>Name the actions “Capitalize words” and “Reverse letters in words.” Preserve line breaks and generate help from the operation catalogue.</td></tr>
+    <tr><td><b>Punctuation and identifiers</b></td><td>Remove Punctuations leaves the question mark in <code>Ready? Yes!</code>. Snake case reduces <span lang="hi">हिन्दी पाठ</span> to one underscore.</td><td>Use Unicode punctuation and retain letters, combining marks and numbers in identifiers. Give currency symbols their own semantics.</td></tr>
+    <tr><td><b>Characters and lines</b></td><td>Reverse All splits the emoji in <code>A😀</code> into invalid surrogate halves. The character count treats it as three units. <code>a↵↵b</code> counts as two lines.</td><td>Count and reverse grapheme clusters in current browsers. Count physical lines, including internal and trailing blank rows. Empty input has zero lines.</td></tr>
+    <tr><td><b>Words and sentences</b></td><td>Whitespace splitting treats an unspaced passage as one word. Splitting punctuation can count the trailing space in <code>Hi!·</code> as a second sentence.</td><td>Use the browser’s word and sentence segmentation. Label the fallback. Display reading time as an estimate.</td></tr>
+    <tr><td><b>Copy and recovery</b></td><td>Copy announces success before its clipboard promise resolves. Opening About discards the draft. The preview can collapse the very whitespace a person is trying to inspect.</td><td>Await clipboard success, offer selectable output on denial, show literal spacing, and open tool help over the current desk.</td></tr>
+  </tbody></table>
+  <p>The mode switch is an uncontrolled checkbox on a navbar keyed by the current date. A remount can reset its visual state or keyboard focus. A prior alert timer can clear a newer message. The new appearance control derives its label from the active theme and leaves operation feedback in place until the next action. <a href="https://github.com/pranshu911/Utextility/blob/831e13e9733496ba88428272ef30c8e046a418b5/src/components/Navbar.js#L15-L24">Original switch</a> · <a href="https://github.com/pranshu911/Utextility/blob/831e13e9733496ba88428272ef30c8e046a418b5/src/components/About.js#L33-L45">Case help</a> · <a href="https://github.com/pranshu911/Utextility/blob/831e13e9733496ba88428272ef30c8e046a418b5/src/components/About.js#L152-L166">Reverse help</a> · <a href="https://github.com/pranshu911/Utextility/blob/831e13e9733496ba88428272ef30c8e046a418b5/src/components/TextForm.js#L27-L179">Handlers</a></p>
+</section>
+
+<section id="workflows" aria-labelledby="workflows-title">
+  <p class="folio">Working release</p><h2 id="workflows-title">Three reasons to open the desk</h2>
+  <h3>Clean a paste before sending it</h3>
+  <p>A writer copies a paragraph from a narrow PDF column. Its hard returns survive the paste, and its words contain stray spacing. “Clean a paste” trims each line, collapses horizontal spacing and joins adjacent prose lines. Empty lines and common list-marker lines keep their boundaries. A poem or an unmarked heading can still resemble wrapped prose. The writer can inspect Changes and remove the joining step.</p>
+  <div class="example"><p><b>Source</b> <code>··Review··the↵proof.↵↵-·Send·notes</code></p><p><b>Proof</b> <code>Review·the·proof.↵↵-·Send·notes</code></p></div>
+  <h3>Tidy a list without losing its order</h3>
+  <p>A support lead combines two lists of labels. “Tidy a list” trims edges, drops blank rows and removes later exact duplicates. The first occurrence wins, so the original ordering survives. For a case-insensitive list the user can add lowercase before deduplication and inspect the result. That also lowercases the labels, a visible tradeoff to discuss with pilot users.</p>
+  <div class="example"><p><b>Source</b> <code>·Ink↵Paper·↵↵Ink↵ink</code></p><p><b>Proof</b> <code>Ink↵Paper↵ink</code></p></div>
+  <h3>Make a batch of readable slugs</h3>
+  <p>A developer pastes headings, one per line. “Make slugs” separates case boundaries, keeps letters from multiple scripts, applies kebab case and drops empty output lines. The result is a set of path segments. Choosing unique site routes and percent-encoding them belongs at the publishing boundary. For code, the same tool index offers snake, camel and Pascal case.</p>
+  <div class="example"><p><b>Source</b> <code>HTTPResponse Codes↵Café &amp; Type</code></p><p><b>Proof</b> <code>http-response-codes↵café-type</code></p></div>
+  <h3>Carry a successful result into the next task</h3>
+  <p>Each recipe starts with a labeled example. A user’s own text survives recipe switches. They can inspect additions and deletions, set a word or character limit, copy the proof or download UTF-8 text. If the destination permits 250 words and the proof has 253, the desk reports three words over the limit. Named recipes retain ordered steps for the next session. “Use alone” keeps a one-off operation one choice away in the tool index.</p>
+  <p class="small">The editor imports UTF-8 plain text, including text-based Markdown and CSV files. CSV is treated as lines of text. To clean a PDF excerpt, copy its text into the editor.</p>
+</section>
+
+<section id="design" aria-labelledby="design-title">
+  <p class="folio">Design study</p><h2 id="design-title">Three visual directions</h2>
+  <p>Each study removes a repeated “Copper” from the same three-line list. The first emphasizes the finished proof, the second shows how the steps produced it, and the third identifies the row that disappeared.</p>
+  <div class="concept"><div class="plate press" role="img" aria-label="Letterpress specimen with Copper, a struck-out duplicate Copper, and Indigo opposite the final two-line proof."><div class="plate-title">List proof.</div><div class="pairs"><div><small>SOURCE</small>Copper<br><del>Copper</del><br>Indigo</div><div><small>PROOF</small>Copper<br>Indigo</div></div></div><div><h3>Letterpress proof room</h3><p><b>Implemented.</b> Pine ink on warm stock, vermilion corrections, DM Serif Text headings and DM Sans controls. The desk places manuscript and proof across a single spread. Ruled type specimens and a printer’s ornament give it a recognizable identity.</p><p>Best for someone asking “Can I paste this back?” On a phone the sheets stack. Strikes and underlines distinguish edits in both appearances. The specimen sits outside the editable area.</p></div></div>
+  <div class="concept"><div class="plate transit" role="img" aria-label="Transit map showing three input lines, an exact duplicate stop, and two output lines, Copper and Indigo."><div class="plate-title">List service</div><div class="stops"><span class="stop"><i></i>3 lines</span><span class="stop"><i></i>Dedupe</span><span class="stop"><i></i>2 lines</span></div><div class="plate-output">Copper / Indigo</div></div><div><h3>Transit diagram</h3><p><b>Concept.</b> Cobalt routes, an amber interchange and ivory enamel. Pair Barlow Condensed station names with Barlow text. Each step is a station a user can select to see its intermediate result. Reordering the steps redraws the route.</p><p>Best when people troubleshoot longer recipes. Use square terminal marks and station names alongside color. On a narrow screen the route runs vertically. A single transformation needs only one stop.</p></div></div>
+  <div class="concept"><div class="plate loom" role="img" aria-label="Weaving draft showing Copper retained, the next Copper skipped, and Indigo retained."><div class="plate-title">List draft</div><div class="weave"><span class="thread"></span><span>Copper · keep</span><span class="thread cut"></span><span>Copper · skip</span><span class="thread"></span><span>Indigo · keep</span></div></div><div><h3>Weaving draft</h3><p><b>Concept.</b> Indigo, madder and flax set the palette. Spectral labels the rows and Work Sans labels the controls. Source lines form rows and operations form columns. Selecting a marked crossing reveals which step changed that line and shows its before and after text.</p><p>Best for reviewing lists with many near-duplicates. Pair each pattern with a written action. On mobile show one row trace at a time. Long prose needs the ordinary reading view.</p></div></div>
+  <p><b>Recommendation.</b> Start with the proof room. It makes the decision to copy easy and gives short writing jobs room to breathe. Test the transit concept if people repeatedly ask which step caused a change. Test the weaving concept if the common question becomes which records a list operation discarded.</p>
+  <p class="source">All three use shape, text or decoration alongside color to communicate changes. <a href="https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html">W3C guidance on use of color</a></p>
+</section>
+
+<section id="engineering" aria-labelledby="engineering-title">
+  <p class="folio">Implementation</p><h2 id="engineering-title">How the new version works</h2>
+  <p>The new folder is a static application with locally bundled fonts and plain JavaScript. It opens from disk and can also run on any static web server. The old React setup has little reusable infrastructure around its algorithms. Extracting the number-spelling rules and preserving the original tool coverage makes a small implementation practical. React has also retired Create React App for new projects. <a href="https://react.dev/blog/2025/02/14/sunsetting-create-react-app">React’s Create React App announcement</a></p>
+  <table><colgroup><col style="width:26%"><col></colgroup><thead><tr><th>Boundary</th><th>Implementation and extension contract</th></tr></thead><tbody>
+    <tr><td><b>Operation catalogue</b><br><code>engine.js</code></td><td>Each entry has a stable ID, human label, group, description and text-to-text function. A recipe is an ordered list of IDs. Adding a tool requires a behavior example, including what it does to line boundaries. The catalogue drives both execution and help.</td></tr>
+    <tr><td><b>Evaluation</b><br><code>engine.js</code>, <code>worker.js</code></td><td>Normalize CRLF and CR to LF at the input boundary. Derive the proof from the source on each run. A failing step reports its position and disables export. Over HTTP, inputs of 4,000 or more UTF-16 units use a worker when available. A version check discards stale results.</td></tr>
+    <tr><td><b>Composition and state</b><br><code>workbench.js</code></td><td>Keep the draft, derived proof, limit and one-step source replacement history in tab memory. Local storage holds named recipe definitions and appearance. A denied storage write leaves the current recipe usable. Source edits during a file read take priority over its late result.</td></tr>
+    <tr><td><b>Interface and export</b><br><code>index.html</code>, <code>styles.css</code></td><td>Native input and dialog elements support keyboard use. The UI renders user text through text nodes. It waits for the clipboard write to succeed and selects the proof for manual copying if the browser denies access. A local Blob provides UTF-8 downloads.</td></tr>
+  </tbody></table>
+  <h3>Limits people can reason about</h3>
+  <p>The current ceiling is 100,000 UTF-16 units per input and 16 steps per recipe. The character budget counts visible grapheme clusters when supported, so an emoji can be one character yet use several input units. Word and sentence boundaries use the browser locale. Title case and sorting follow English conventions. Reading time assumes 200 words per minute. <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Segmenter">Browser text segmentation</a></p>
+  <p>The change view compares word, spacing and punctuation tokens. It switches to a full-text comparison suggestion above 32,000 combined units or a 250,000-cell comparison table. The full source and proof stay available. Direct-file use computes on the main thread. These limits bound work and should be revisited with samples from the pilot.</p>
+  <p class="source">Local entry point <code>utextility-v2/index.html</code>. Regression suite <code>node --test</code> from the same folder. <a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard/writeText">Clipboard write behavior</a></p>
+</section>
+
+<section id="release" aria-labelledby="release-title">
+  <p class="folio">Delivery and validation</p><h2 id="release-title">A release plan tied to repeat use</h2>
+  <p>Use one week of observed work to choose the next investment. The estimates below assume one developer, a static app and ready access to a few pilot users. They are planning ranges.</p>
+  <table><colgroup><col style="width:24%"><col style="width:41%"><col></colgroup><thead><tr><th>Stage</th><th>Deliverable</th><th>Decision gate</th></tr></thead><tbody>
+    <tr><td><b>Local release</b><br>Available now</td><td>The three workflows, full original operation coverage, local recipe book, reviewable changes and limit checks. Share a local copy for a moderated session.</td><td>Use the regression fixtures and reproduce each participant’s intended result with the source still available.</td></tr>
+    <tr><td><b>Usability pilot</b><br>3–5 developer days across one week</td><td>Observe five people who clean prose or lists at least weekly. Include phone and keyboard use. Test each person’s usual method and the desk in alternating order. Collect elapsed time, corrections and the reason for hesitation.</td><td>Aim for four of five to copy a correct first proof independently within 30 seconds of pasting. Record any lost paragraph or unwanted change separately.</td></tr>
+    <tr><td><b>Repeat-use release</b><br>1–2 weeks after the pilot</td><td>Ship the most repeated missing task. Candidates include literal find/replace with a match count, case-insensitive dedupe that keeps original spelling, and collision feedback for slugs. Add versioned recipe import/export if people exchange routines.</td><td>Ask participants to keep a one-week tally. Aim for three of five to use the tool on a second real task. If usage stalls, investigate the pasted material and the destination before expanding the catalogue.</td></tr>
+    <tr><td><b>Later experiments</b><br>Evidence dependent</td><td>Test an installable offline shell if repeat users reopen it on unreliable connections. If people struggle to compose recipes, prototype a natural-language step picker that suggests known operation IDs for review.</td><td>Fund offline installation when repeat users report access friction. Fund AI assistance when the picker beats search on representative instructions and users can explain the resulting sequence.</td></tr>
+  </tbody></table>
+  <h3>How to use frontier models here</h3>
+  <p>Start during development. Give a model synthetic examples of mixed scripts, whitespace, list markers and emoji, then have a human decide the expected output. For a later step picker, send a user-authored instruction on explicit invocation and validate the proposed IDs locally. The ordinary transform path can continue to work offline. A pilot diary can record the task and outcome without retaining anyone’s pasted text.</p>
+  <h3>Verification and remaining evidence</h3>
+  <p>The 32 regression tests cover all 23 tools, full recipes, ordering, counts, Unicode fallback, comparison reconstruction and limits. Chromium checks exercised direct-file and HTTP entry, import and download bytes, recipe save/delete/restore, clipboard success and denial through a test double, a large worker job and responsive widths from 320 to 1,440 pixels. The tested flows made zero third-party requests.</p>
+  <p>Before a public launch, test on a physical Android phone and in Safari, observe keyboard and screen reader users completing a paste, and measure typing latency on a midrange device. The pilot determines whether people return. Keep the existing portfolio link serving its current release until a separately deployed v2 passes those checks.</p>
+</section>
+</article></main>
+</body>
+</html>

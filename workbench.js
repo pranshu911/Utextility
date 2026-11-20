@@ -12,6 +12,7 @@
   let activeId = builtins[0].id;
   let demo = false;
   let lastFind = builtins.find(tool => tool.id === "find").steps[0];
+  let keepBreaks = false, foldListCase = false;
   let sourceName = "";
   let previousSource = null;
   let sourceVersion = 0;
@@ -90,6 +91,7 @@
 
   function quickToolId(sequence) {
     if (sequence.length === 1 && engine.stepId(sequence[0]) === "replace") return "find";
+    if (sameSteps(sequence, ["trim", "spaces"])) return "paste";
     if (sameSteps(sequence, ["trim", "blanks", "dedupe-fold"])) return "list";
     return builtins.find(tool => sameSteps(sequence, tool.steps))?.id;
   }
@@ -97,19 +99,22 @@
   function renderOptions() {
     const controls = $("tool-options");
     controls.replaceChildren();
-    if (quickToolId(steps) === "slugs") {
-      controls.append(element("p", "“Summer Reading” becomes “summer-reading”. Enter one heading per line.", "option-hint"));
-    }
-    if (quickToolId(steps) === "list") {
+    const quick = quickToolId(steps);
+    if (quick === "paste" || quick === "list") {
       const label = element("label", undefined, "checkbox-label");
       const check = element("input");
       check.type = "checkbox";
-      check.checked = steps.includes("dedupe-fold");
+      check.checked = quick === "paste" ? !steps.includes("unwrap") : steps.includes("dedupe-fold");
       check.addEventListener("change", () => {
-        const next = steps.map(id => ["dedupe", "dedupe-fold"].includes(id) ? (check.checked ? "dedupe-fold" : "dedupe") : id);
-        changeSteps(next, "", false);
+        if (quick === "paste") {
+          keepBreaks = check.checked;
+          changeSteps(keepBreaks ? ["trim", "spaces"] : [...builtins[0].steps], "", false);
+        } else {
+          foldListCase = check.checked;
+          changeSteps(["trim", "blanks", foldListCase ? "dedupe-fold" : "dedupe"], "", false);
+        }
       });
-      label.append(check, document.createTextNode("Treat “Ink” and “ink” as the same item"));
+      label.append(check, document.createTextNode(quick === "paste" ? "Keep my line breaks" : "Treat “Ink” and “ink” as the same item"));
       controls.append(label);
     }
     steps.forEach((step, index) => {
@@ -147,6 +152,19 @@
     const picker = $("quick-recipes");
     picker.replaceChildren();
     const selected = findRecipe();
+    const quick = quickToolId(steps);
+    const descriptions = {
+      paste: steps.includes("unwrap") ? "Fixes extra spaces and joins lines within a paragraph." : "Fixes extra spaces and keeps every line break.",
+      list: "Removes empty and repeated lines. Keeps the first item in its original place.",
+      slugs: "Enter one heading per line. “Summer Reading” becomes “summer-reading”.",
+      find: "Replaces every exact match, including capitalization. Leave the replacement empty to remove it."
+    };
+    $("tool-context").dataset.tool = quick || "custom";
+    $("tool-hint").textContent = descriptions[quick] || (steps.length === 1 ? engine.byId.get(engine.stepId(steps[0])).description :
+      steps.length ? "Runs the current steps in order. You can change their order below." : "Choose a tool to start editing.");
+    const section = { paste: "clean", list: "list", slugs: "links", find: "replace" }[quick] || (steps.length === 1 ? "tool-" + engine.stepId(steps[0]) : "sequence");
+    $("tool-guide").dataset.section = section;
+    $("tool-guide").href = (location.protocol === "file:" ? "#guide-" : "guide#") + section;
     for (const recipe of builtins) {
       const control = button("", "recipe-button", () => choose(recipe));
       const mark = element("span", recipe.symbol, "recipe-symbol");
@@ -180,6 +198,8 @@
     const replaceExample = demo && recipe.example && activeId !== recipe.id;
     activeId = recipe.id;
     steps = recipe.id === "find" ? (replaceExample ? [...recipe.exampleSteps] : [lastFind]) : [...recipe.steps];
+    if (recipe.id === "paste" && keepBreaks) steps = ["trim", "spaces"];
+    if (recipe.id === "list" && foldListCase) steps = ["trim", "blanks", "dedupe-fold"];
     if (recipe.id === "find") lastFind = steps[0];
     if (replaceExample) setSource(recipe.example, true, "", false);
     renderRecipes();
@@ -255,6 +275,7 @@
 
   function paint(message) {
     if (message.version !== version) return;
+    $("result-area").setAttribute("aria-busy", "false");
     current = message.result || null;
     displayedStats = current?.stats || message.stats || null;
     const error = message.error || "";
@@ -327,6 +348,8 @@
     current = null;
     $("copy").disabled = true;
     $("download").disabled = true;
+    $("copy").classList.remove("is-copied");
+    $("result-area").setAttribute("aria-busy", "true");
     $("proof-state").textContent = "Updating…";
     clearTimeout(renderTimer);
     renderTimer = setTimeout(() => {
@@ -431,11 +454,30 @@
     });
   }
 
+  function singleStep(operation) {
+    return operation.id === "replace" ? { id: "replace", find: "", replacement: "" } : operation.id;
+  }
+
+  function useTool(operation) {
+    changeSteps([singleStep(operation)], "");
+    if (dialog.open) dialog.close();
+    announce("Using " + operation.name + ".");
+    if (operation.id === "replace") $("tool-options").querySelector("textarea")?.focus();
+  }
+
+  document.addEventListener("utextility:use-tool", event => {
+    const operation = engine.byId.get(event.detail);
+    if (!operation) return;
+    useTool(operation);
+    if (operation.id !== "replace") source.focus();
+  });
+
   function renderTools() {
     const term = $("tool-search").value.trim().toLowerCase();
     const list = $("tool-list");
     list.replaceChildren();
     const customized = $("customize").open;
+    $("tool-mode-help").textContent = customized ? "Add a tool to the end of your steps. The result updates as you go." : "Choose Use to apply one tool. Open Edit current steps to combine several.";
     const popular = new Set(["upper", "lower", "sort", "punctuation"]);
     const groups = new Map();
     const aliases = { kebab: "slug url link names", spaces: "whitespace", dedupe: "dedupe duplicate", "dedupe-fold": "duplicate ignore case", upper: "all caps", trim: "whitespace" };
@@ -445,14 +487,10 @@
       const info = element("div");
       info.append(element("strong", operation.name), element("p", operation.description));
       const actions = element("div", undefined, "row-actions");
-      const step = operation.id === "replace" ? { id: "replace", find: "", replacement: "" } : operation.id;
       const action = customized ? "Add" : "Use";
       actions.append(button(action, "small-button", () => {
-        if (customized) changeSteps([...steps, step], "Added " + operation.name + (operation.id === "replace" ? ". Set the words to find in the editor." : "."));
-        else {
-          changeSteps([step], ""); dialog.close(); announce("Using " + operation.name + ".");
-          if (operation.id === "replace") $("tool-options").querySelector("textarea")?.focus();
-        }
+        if (customized) changeSteps([...steps, singleStep(operation)], "Added " + operation.name + (operation.id === "replace" ? ". Set the words to find in the editor." : "."));
+        else useTool(operation);
       }, action + " " + operation.name));
       row.append(info, actions);
       const key = term ? "Search results" : popular.has(operation.id) ? "Common tools" : operation.group;
@@ -473,6 +511,8 @@
 
   function renderLimit() {
     const status = $("limit-status");
+    const meter = $("limit-meter");
+    meter.hidden = !limit || !displayedStats;
     status.textContent = "";
     status.classList.remove("over");
     $("edit-limit").textContent = limit ? "Edit limit" : "Set a limit";
@@ -483,6 +523,10 @@
     status.textContent = remaining === 0 ? "Exactly at the " + numberFormat.format(limit.max) + "-" + limit.unit.slice(0, -1) + " limit."
       : numberFormat.format(Math.abs(remaining)) + " " + unit + (remaining < 0 ? " over the limit." : " remaining.");
     status.classList.toggle("over", remaining < 0);
+    meter.max = limit.max;
+    meter.value = Math.min(limit.max, displayedStats[limit.unit]);
+    meter.classList.toggle("over", remaining < 0);
+    meter.setAttribute("aria-valuetext", numberFormat.format(displayedStats[limit.unit]) + " of " + numberFormat.format(limit.max) + " " + limit.unit);
   }
   function setLimitForm(open) {
     $("limit-form").hidden = !open;
@@ -552,9 +596,13 @@
     const requestedVersion = version;
     try {
       await navigator.clipboard.writeText(current.proof);
-      if (requestedVersion === version) announce("Result copied.");
+      if (requestedVersion === version) {
+        $("copy").classList.add("is-copied");
+        $("proof-state").textContent = "Copied";
+        announce("Result copied.");
+      }
     } catch {
-      if (requestedVersion !== version) return;
+      if (requestedVersion !== version || $("desk").hidden || dialog.open) return;
       if (view !== "text") document.querySelector('[data-view="text"]').click();
       const panel = $("proof");
       panel.focus(); window.getSelection()?.selectAllChildren(panel);

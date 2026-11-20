@@ -23,13 +23,16 @@ test("controls fit the viewport from 320 to 1440 pixels and with doubled text", 
     await button(page,"Find and replace").click(); await checkWidth(page, "editor " + width);
     await button(page,"Edit steps").click(); await checkWidth(page, "step editor " + width);
     await page.keyboard.press("Escape"); await button(page,"Saved steps").click();
-    await page.getByText("Move steps to another browser").click(); await checkWidth(page, "saved steps " + width);
+    await page.getByRole("dialog").getByText("Move steps to another browser", { exact:true }).click(); await checkWidth(page, "saved steps " + width);
     await page.keyboard.press("Escape");
   }
   await page.setViewportSize({ width: 960, height: 750 });
   await page.evaluate(()=>document.documentElement.style.fontSize="200%");
   await checkWidth(page, "200% text");
   await button(page,"Edit steps").click(); await checkWidth(page, "200% dialog text");
+  await page.keyboard.press("Escape");
+  await page.setViewportSize({ width:320, height:568 });
+  await checkWidth(page, "200% text on a small phone");
 });
 
 test("mobile editing has a result jump and large primary touch targets", async ({ page }) => {
@@ -86,9 +89,9 @@ test("automated accessibility scan covers both themes and the main interactive s
   await button(page,"Set a limit").click(); await scan("limit form");
   await button(page,"Use dark mode").click(); await scan("dark editor");
   await button(page,"More tools").click(); await scan("tool library");
-  await page.getByRole("dialog").getByText(/Edit current steps/).click(); await scan("edit steps");
+  await page.getByRole("dialog").locator("summary").filter({hasText:"Edit current steps"}).click(); await scan("edit steps");
   await button(page,"Save these steps").click(); await scan("name form");
   await page.keyboard.press("Escape"); await button(page,"Saved steps").click();
-  await page.getByText("Move steps to another browser").click(); await scan("saved steps and files");
+  await page.getByRole("dialog").getByText("Move steps to another browser", { exact:true }).click(); await scan("saved steps and files");
   expect(findings).toEqual([]);
 });

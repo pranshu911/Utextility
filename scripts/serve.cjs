@@ -5,11 +5,12 @@ const path = require("node:path");
 const root = path.resolve(__dirname, "..");
 const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".woff2": "font/woff2", ".png": "image/png" };
-const entryFiles = new Set(["index.html", "engine.js", "workbench.js", "saved-steps.js", "worker.js", "styles.css"]);
+const entryFiles = new Set(["index.html", "engine.js", "workbench.js", "saved-steps.js", "worker.js", "styles.css", "guide.js", "guide.css"]);
 
 async function serve(request, response) {
   const pathname = new URL(request.url, "http://localhost").pathname;
-  const file = pathname === "/" ? "index.html" : pathname.slice(1);
+  if (pathname === "/guide/") { response.writeHead(308, { Location: "/guide" }).end(); return; }
+  const file = pathname === "/" || pathname === "/guide" ? "index.html" : pathname.slice(1);
   if (!["GET", "HEAD"].includes(request.method) || !(entryFiles.has(file) || /^assets\/[\w-]+\.(?:woff2|png)$/.test(file))) {
     response.writeHead(404).end();
     return;

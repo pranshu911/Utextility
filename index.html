@@ -6,29 +6,33 @@
   <meta name="theme-color" content="#283c34">
   <meta name="description" content="Clean up messy text, remove repeated lines, find and replace words, and check your word count in your browser.">
   <title>Utextility · Clean up your text</title>
+  <script>if (/\/guide\/?$/.test(location.pathname) || (location.protocol === "file:" && /^#guide(?:-|$)/.test(location.hash))) document.documentElement.dataset.page = "guide";</script>
   <link rel="icon" href="assets/mark.png" type="image/png">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="guide.css">
   <script defer src="engine.js"></script>
   <script defer src="saved-steps.js"></script>
   <script defer src="workbench.js"></script>
+  <script defer src="guide.js"></script>
 </head>
 <body>
-  <a class="skip" href="#source" tabindex="0">Skip to text editor</a>
+  <a class="skip" id="skip-link" href="#source" tabindex="0">Skip to text editor</a>
   <header class="masthead">
     <div class="wrap mast-inner">
-      <a class="wordmark" href="#desk" aria-label="Utextility home"><span class="printer-flower" aria-hidden="true">✳</span>Utextility<span class="brand-period" aria-hidden="true">.</span></a>
+      <a class="wordmark" href="./" data-page-link="editor" aria-label="Utextility home"><span class="printer-flower" aria-hidden="true">✳</span>Utextility<span class="brand-period" aria-hidden="true">.</span></a>
       <nav aria-label="Main navigation">
-        <a class="desk-link" href="#desk" aria-current="page">Editor</a>
+        <a class="desk-link" id="nav-editor" href="./" data-page-link="editor" aria-current="page">Editor</a>
+        <a class="desk-link" id="nav-guide" href="guide" data-page-link="guide">Quick guide</a>
         <button id="open-book" class="nav-button" type="button">Saved steps</button>
-        <button id="theme" class="theme" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">◐</span></button>
       </nav>
+      <button id="theme" class="theme" type="button" aria-label="Use dark mode" title="Use dark mode"><span aria-hidden="true">◐</span></button>
     </div>
   </header>
 
   <main class="wrap" id="desk">
     <div class="hero">
       <div class="hero-copy">
-        <h1>Clean up your <em>text</em><span class="red-period">.</span></h1>
+        <h1 id="editor-title" tabindex="-1">Clean up your <em>text</em><span class="red-period">.</span></h1>
         <p>Paste your text, choose a tool, and copy the result.</p>
       </div>
       <div class="specimen" aria-hidden="true">
@@ -44,14 +48,17 @@
         <div id="quick-recipes" class="quick-recipes" role="group" aria-labelledby="quick-title"></div>
         <button id="open-tools" class="quiet" type="button">More tools</button>
       </div>
-      <div id="tool-options" class="tool-options" hidden></div>
+      <div class="tool-context" id="tool-context">
+        <div class="tool-explainer"><p id="tool-hint"></p><a id="tool-guide" href="guide" data-page-link="guide">How it works</a></div>
+        <div id="tool-options" class="tool-options" hidden></div>
+      </div>
       <div class="spread">
         <section class="sheet source-sheet" aria-labelledby="source-title">
           <div class="sheet-heading">
             <h2 id="source-title"><label for="source">Your text</label></h2>
             <button id="sample" class="quiet" type="button">Try an example</button>
           </div>
-          <textarea id="source" class="editor" dir="auto" placeholder="Paste or type your text here…" spellcheck="false" autocomplete="off" aria-describedby="source-info"></textarea>
+          <textarea id="source" class="editor" dir="auto" placeholder="Paste or type your text here…" spellcheck="false" autocomplete="off" aria-describedby="tool-hint source-info"></textarea>
           <div class="sheet-foot">
             <span id="source-info" class="metadata"></span>
             <div class="actions">
@@ -70,13 +77,14 @@
               <button data-view="changes" type="button" aria-pressed="false">Changes</button>
             </div>
           </div>
-          <div class="proof-area">
+          <div id="result-area" class="proof-area" aria-busy="false">
             <div id="proof" class="proof-text" role="region" aria-label="Edited text" tabindex="0" dir="auto"></div>
             <div id="changes" class="changes-text" role="region" aria-label="Changes to your text" tabindex="0" dir="auto" hidden></div>
           </div>
           <div class="sheet-foot proof-foot">
             <span id="proof-state" class="metadata"></span>
             <div class="actions">
+              <a class="quiet mobile-result" href="#source" tabindex="0">Back to my text</a>
               <button id="download" class="light-button" type="button" disabled>Download</button>
               <button id="copy" class="primary" type="button" disabled><span aria-hidden="true" class="copy-icon"></span>Copy result</button>
             </div>
@@ -105,6 +113,7 @@
           <div><dt>Reading time</dt><dd data-stat="seconds">—</dd></div>
         </dl>
         <p id="limit-status" class="limit-status"></p>
+        <progress id="limit-meter" class="ink-meter" aria-label="Limit used" hidden></progress>
         <form id="limit-form" class="limit-form" hidden>
           <label>Maximum <input id="limit-value" class="text-field" type="number" min="1" max="1000000" step="1" required inputmode="numeric" placeholder="250"></label>
           <div class="limit-control"><label for="limit-unit">Count</label><select id="limit-unit" class="text-field"><option value="words">Words</option><option value="characters">Characters</option></select></div>
@@ -115,6 +124,85 @@
     </div>
     <footer class="page-foot"><span class="local-mark" aria-hidden="true"></span>Your text stays in this tab. Saved steps stay in this browser.</footer>
     <noscript>Turn on JavaScript in this browser to edit your text.</noscript>
+  </main>
+
+  <main class="wrap guide-page" id="guide-page" aria-labelledby="guide-title">
+    <header class="guide-cover">
+      <div>
+        <h1 id="guide-title" tabindex="-1">Quick <em>guide</em><span class="red-period">.</span></h1>
+        <p>Try a small edit on practice text. Your own text stays in the editor.</p>
+        <nav class="guide-contents" aria-label="Guide contents">
+          <a href="guide#practice" data-page-link="guide" data-section="practice">Practice lessons</a>
+          <a href="guide#tools" data-page-link="guide" data-section="tools">Tool index</a>
+          <a href="guide#help" data-page-link="guide" data-section="help">Editor help</a>
+        </nav>
+      </div>
+      <div class="cover-proof" aria-hidden="true">
+        <div class="proof-slip slip-before"><span>draft</span></div>
+        <div class="proof-slip slip-after"><em>final</em></div>
+      </div>
+    </header>
+    <section class="practice-spread" aria-labelledby="practice-title">
+      <div class="lesson-rail">
+        <h2 id="practice-title" tabindex="-1">Practice lessons</h2>
+        <nav id="lesson-list" aria-label="Practice lessons"></nav>
+        <div class="mobile-lesson"><label for="lesson-choice" class="sr-only">Choose a practice lesson</label><select id="lesson-choice" class="text-field"></select></div>
+        <div class="practice-progress">
+          <span id="tried-count"></span>
+          <progress class="ink-meter" id="tried-meter" aria-label="Practice lessons tried"></progress>
+        </div>
+      </div>
+      <div class="practice-leaf">
+        <div class="lesson-folio" id="lesson-folio"></div>
+        <h3 id="lesson-title" tabindex="-1"></h3>
+        <p id="lesson-intro"></p>
+        <form id="practice-form">
+          <div class="exercise-options" id="exercise-options" hidden></div>
+          <div class="practice-pages">
+            <div class="practice-input">
+              <label for="practice-source">Practice text</label>
+              <textarea id="practice-source" dir="auto" maxlength="2000" required spellcheck="false" autocomplete="off" aria-describedby="practice-size"></textarea>
+              <span id="practice-size" class="sr-only">The practice area accepts up to 2,000 text units.</span>
+              <div class="practice-actions">
+                <button id="run-lesson" type="submit" class="primary" aria-controls="practice-result"></button>
+                <button id="reset-lesson" type="button" class="quiet">Reset example</button>
+              </div>
+            </div>
+            <div class="practice-output">
+              <h4 id="practice-result-title">Result</h4>
+              <div id="practice-result" role="region" aria-labelledby="practice-result-title" aria-describedby="practice-feedback" tabindex="0" dir="auto"></div>
+            </div>
+          </div>
+        </form>
+        <p id="practice-feedback" class="practice-feedback"></p>
+        <span id="practice-announcement" class="sr-only" role="status" aria-atomic="true"></span>
+        <div class="lesson-end"><p id="lesson-tip"></p><a id="next-lesson" class="light-button" href="guide" data-page-link="guide"></a></div>
+      </div>
+    </section>
+    <section class="guide-index" aria-labelledby="index-title">
+      <div class="index-heading"><h2 id="index-title" tabindex="-1">Tool index</h2><p>Pick a tool to see exactly what it changes.</p></div>
+      <div class="index-body">
+        <label for="index-choice">Choose a tool</label>
+        <select id="index-choice" class="text-field"></select>
+        <p id="index-description"></p>
+        <div class="index-proofs"><div><h3>Before</h3><pre id="index-before" dir="auto"></pre></div><div><h3>After</h3><pre id="index-after" dir="auto"></pre></div></div>
+        <button id="index-apply" class="light-button" type="button">Use this tool in the editor</button>
+        <span id="index-announcement" class="sr-only" role="status"></span>
+      </div>
+    </section>
+    <section class="guide-reference" aria-labelledby="help-title">
+      <div class="index-heading"><h2 id="help-title" tabindex="-1">Editor help</h2><p>Open the topic you need.</p></div>
+      <div class="help-topics">
+        <details><summary>Start an edit and check what changed</summary><p>Paste or type in <strong>Your text</strong>, or choose <strong>Try an example</strong>. Results update as you work. Choose <strong>Changes</strong> to see removals crossed out and additions underlined. Dots mark spaces and ↵ marks a line break. Choose <strong>Text</strong> to read the finished version.</p><p>Use <strong>Keep my line breaks</strong> for addresses, poems and other text where each line matters. Fenced code keeps its formatting during cleanup.</p></details>
+        <details><summary>Open, copy, download and undo</summary><p><strong>Open file</strong> reads UTF-8 plain text, including TXT, Markdown, CSV and TSV. <strong>Copy result</strong> copies your edited text. If your browser blocks copying, the editor selects the result for your usual Copy command. <strong>Download</strong> saves a UTF-8 text file.</p><p>After clearing your text, opening a file or loading an example, <strong>Undo</strong> brings back the previous text. Type again to start a new edit.</p></details>
+        <details><summary>Read counts and set a limit</summary><p>Under <strong>Text counts</strong>, choose <strong>Your text</strong> or <strong>Result</strong>. <strong>Set a limit</strong> lets you enter a word or character maximum. The meter and message show how much room you have. <strong>Edit limit</strong> lets you change or remove it.</p><p>Lines include blank lines. Reading time assumes 200 words per minute. Character counts group visible emoji and accented letters when your browser supports it.</p></details>
+        <details><summary>Find tools, combine them and save steps</summary><p>Open <strong>More tools</strong>, search by name or task, and choose <strong>Use</strong> to apply a single tool. To combine tools, open <strong>Edit steps</strong>. Choose <strong>Add</strong>, then use <strong>Up</strong>, <strong>Down</strong> or <strong>Remove</strong> to adjust the order. The editor applies the first step first.</p><p><strong>Save these steps</strong> gives the sequence a name. Open <strong>Saved steps</strong> to use it again, delete it or undo a deletion.</p></details>
+        <details><summary>Move saved steps to another browser</summary><p>Open <strong>Saved steps → Move steps to another browser</strong>. Select a sequence and choose <strong>Download steps file</strong>. In the other browser, choose <strong>Open steps file</strong>, review its settings and save it. Choose <strong>Use</strong> when you want to apply it.</p><p>The settings file includes the sequence name, tools and any saved find-and-replace words. Your working text stays in the tab.</p></details>
+        <details><summary>Use the keyboard, a phone or dark mode</summary><p>Press <kbd>Tab</kbd> to reach controls. The first link skips straight to the editor or guide. Use <kbd>Enter</kbd> to follow links, <kbd>Space</kbd> to toggle a checkbox and <kbd>Esc</kbd> to close a dialog. On a narrow screen, <strong>View result</strong> and <strong>Back to my text</strong> move between the two areas.</p><p>The appearance button in the top bar switches light and dark mode. Returning from this guide in the same tab keeps your text and editor settings.</p></details>
+        <details><summary>Privacy, large pastes and offline use</summary><p>Your text is processed in this tab. Reloading starts a fresh draft. Saved steps and appearance stay in this browser. To use the app offline, open <strong>index.html</strong> from the complete downloaded folder.</p><p>You can paste up to 100,000 text units at once. Most letters count as one unit, and some emoji use several. You can combine up to 16 steps. Each find or replacement can use 1,000 units, and a result can reach 300,000. If an edit is too long to highlight, choose <strong>Text</strong> to read or copy the full result.</p></details>
+      </div>
+    </section>
+    <footer class="guide-foot"><a class="primary" href="./" data-page-link="editor">Back to editor</a><a href="guide" data-page-link="guide">Top of guide</a></footer>
   </main>
 
   <dialog id="recipe-dialog" aria-labelledby="dialog-title">
@@ -144,7 +232,8 @@
           <button id="save-from-tools" class="light-button" type="button">Save these steps</button>
         </details>
         <h3 class="catalogue-title"><label for="tool-search">Find a tool</label></h3>
-        <input id="tool-search" type="search" class="text-field" placeholder="Search by name or task…" autocomplete="off">
+        <p id="tool-mode-help" class="dialog-intro"></p>
+        <input id="tool-search" type="search" class="text-field" placeholder="Search by name or task…" autocomplete="off" aria-describedby="tool-mode-help">
         <div id="tool-list"></div>
       </section>
       <section id="save-page" hidden>

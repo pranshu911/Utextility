@@ -2,11 +2,13 @@
 
 Clean up text, check what changed, and copy the result. Open [the editor](index.html) in a current browser. The complete folder works offline, including the fonts. The editor starts blank. **Try an example** loads a short sample for the selected tool.
 
+**Quick guide** opens six editable practice lessons, a before-and-after index of every tool, and help with files, counts, keyboard controls and saved steps. You can visit it mid-edit and come back to your draft in the same tab. On the hosted app the guide has its own address at `/guide`, and a lesson link such as `/guide#list` opens that exercise directly.
+
 ## Everyday tasks
 
 | To do this | Choose | What happens |
 | --- | --- | --- |
-| Fix a paragraph pasted from a PDF | **Clean up text** | Removes extra spaces and joins wrapped prose. Blank paragraphs, marked list items and fenced code keep their boundaries. |
+| Fix a paragraph pasted from a PDF | **Clean up text** | Removes extra spaces and joins wrapped prose. Blank paragraphs, marked list items and fenced code keep their boundaries. Select **Keep my line breaks** for addresses or verse. |
 | Clean a list of labels | **Tidy a list** | Trims each row, drops empty lines and keeps the first copy of each item. The checkbox lets `Ink` and `ink` count as the same item while keeping the first spelling. |
 | Turn headings into link names | **Make link names** | `Summer Reading` becomes `summer-reading`. Enter one heading per line. A notice identifies the first pair of repeated result lines. |
 | Update a word or phrase | **Find and replace** | Shows the number of exact, case-sensitive matches. Leave **Replace with** empty to remove them. Punctuation, newlines and dollar signs are treated literally. |
@@ -58,12 +60,12 @@ The suite starts and stops its own local server. Run `npm run audit:measure` for
 
 ## Deploying on Vercel
 
-The project root contains the static editor. The [Vercel configuration](vercel.json) copies its six entry files and the bundled assets into `dist/`. Vercel serves this directory. The old `/about` address redirects to the editor.
+The [Vercel configuration](vercel.json) copies the editor, guide and their local assets into `dist/`. The editor and guide share a document so moving between them keeps the draft in memory. Vercel resolves direct requests to `/guide` to that entry point. The old `/about` address redirects to the editor.
 
 Use the pull request's preview on the Vercel project that owns `utextility.vercel.app` to check editing, copying, downloading and the old address. Production follows `main` when automatic deployments are enabled. The [legacy-v1 branch](https://github.com/pranshu911/Utextility/tree/legacy-v1) preserves the previous React implementation.
 
 ## Project documents
 
-The [implementation and audit report](docs/audit.md) records the current release, screenshots, verification results and remaining user research. The [illustrated revamp proposal](docs/revamp.html) and [print edition](docs/Utextility-revamp.pdf) document the earlier codebase and the three original design directions.
+The [implementation and audit report](docs/audit.md) records the 2.1 release, screenshots, verification results and remaining user research. The [illustrated revamp proposal](docs/revamp.html) and [print edition](docs/Utextility-revamp.pdf) document the earlier codebase and the three original design directions.
 
 The processing code lives in [engine.js](engine.js). The [editor controller](workbench.js), [background worker](worker.js) and [saved-step storage](saved-steps.js) share the same tool definitions. DM Sans and DM Serif Text are bundled locally under the SIL Open Font License. [DM Sans license](assets/dmsans-OFL.txt) · [DM Serif Text license](assets/dmseriftext-OFL.txt)
